@@ -21,3 +21,4 @@ Werkzeug==2.2.2
 WTForms==3.0.1
 gunicorn==20.1.0
 psycopg2-binary==2.9.5
+sqlalchemy.dialects:postgres==22.3.1
