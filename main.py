@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
-from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
+from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm, CreateNewPostButton
 from flask_gravatar import Gravatar
 from functools import wraps
 import os
@@ -107,10 +107,17 @@ def admin_only(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@app.route('/')
+@app.route('/', methods=["POST", "GET"])
 def get_all_posts():
     posts = BlogPost.query.all()
-    return render_template("index.html", all_posts=posts)
+    new_post_button = CreateNewPostButton()
+    if new_post_button.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("You need to login or register to create new post.")
+            return redirect(url_for("login"))
+        else:
+            return redirect(url_for("add_new_post"))
+    return render_template("index.html", all_posts=posts, form=new_post_button)
 
 
 @app.route('/register', methods=["POST", "GET"])
@@ -197,7 +204,7 @@ def contact():
 
 
 @app.route("/new-post", methods=["POST", "GET"])
-@admin_only
+
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
