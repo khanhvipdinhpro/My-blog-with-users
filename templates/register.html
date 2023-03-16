@@ -29,12 +29,13 @@
             {% endfor %}
             {% endif %}
             {% endwith %}
+
+
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
             <form method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             </form>
 
-            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
-            {{ form.csrf_token }}
         </div>
     </div>
 </div>
