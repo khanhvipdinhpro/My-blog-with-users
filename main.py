@@ -10,7 +10,6 @@ from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm, CreateNe
 from flask_gravatar import Gravatar
 from functools import wraps
 import os
-from flask_wtf.csrf import CSRFProtect
 
 
 app = Flask(__name__)
@@ -20,7 +19,6 @@ app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 # Enable ckediter, bootstrap and csrf
 ckeditor = CKEditor(app)
 Bootstrap(app)
-csrf = CSRFProtect(app)
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///blog.db")
@@ -31,7 +29,7 @@ db = SQLAlchemy(app)
 ##LOGIN DATABASE
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+login_manager.session_protection = 'basic' # login_manager.session_protection = 'strong' causes session to purge or something
 ##USE GRAVATAR IMG FOR USER AVATAR
 gravatar = Gravatar(app,
                     size=100,

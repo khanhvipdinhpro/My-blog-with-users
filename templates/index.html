@@ -51,9 +51,6 @@
 
                 {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary float-right"}) }}
 
-                <form method="post">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                </form>
             </div>
 
 
