@@ -30,7 +30,7 @@ db = SQLAlchemy(app)
 ##LOGIN DATABASE
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.session_protection = None # login_manager.session_protection = 'basic' causes session to purge or something
+login_manager.session_protection = 'strong' # login_manager.session_protection = 'basic' causes session to purge or something
 ##USE GRAVATAR IMG FOR USER AVATAR
 gravatar = Gravatar(app,
                     size=100,
