@@ -36,7 +36,9 @@
 
                 <!--           Comments Area -->
                 <!--           Create the wtf quickform from CommentForm-->
-                {{ form.csrf_token }}
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                </form>
                 <b>{{ wtf.quick_form(form, novalidate=True, button_map={'submit':'primary'}) }}</b>
                 <!--          Load the CKEditor-->
                 {{ ckeditor.load() }}
