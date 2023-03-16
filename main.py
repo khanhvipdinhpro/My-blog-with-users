@@ -10,7 +10,7 @@ from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm, CreateNe
 from flask_gravatar import Gravatar
 from functools import wraps
 import os
-from flask_wtf.csrf import CSRFProtect
+
 
 app = Flask(__name__)
 app.app_context().push()
@@ -19,7 +19,7 @@ app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 # Enable ckediter, bootstrap and csrf
 ckeditor = CKEditor(app)
 Bootstrap(app)
-csrf = CSRFProtect(app)
+
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///blog.db")
