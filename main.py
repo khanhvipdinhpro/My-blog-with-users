@@ -21,17 +21,17 @@ ckeditor = CKEditor(app)
 Bootstrap(app)
 
 
-##CONNECT TO DB
+# CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///blog.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-##LOGIN DATABASE
+# LOGIN DATABASE
 login_manager = LoginManager(app)
 # login_manager.init_app(app)
-login_manager.session_protection = 'strong' # login_manager.session_protection = 'basic' causes session to purge or something
-##USE GRAVATAR IMG FOR USER AVATAR
+login_manager.session_protection = 'strong'  # login_manager.session_protection = 'basic' causes session to purge
+# USE GRAVATAR IMG FOR USER AVATAR
 gravatar = Gravatar(app,
                     size=100,
                     rating='g',
@@ -41,12 +41,13 @@ gravatar = Gravatar(app,
                     use_ssl=False,
                     base_url=None)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-##CONFIGURE TABLES
 
+# CONFIGURE TABLES
 class User(UserMixin, db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
@@ -55,19 +56,20 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100), nullable=False)
 
     # *******Parent relationship with BlogPost*******#
-    #This will act like a List of BlogPost objects attached to each User.
-    #The "author" refers to the author property in the BlogPost class.
+    # This will act like a List of BlogPost objects attached to each User.
+    # The "author" refers to the author property in the BlogPost class.
     posts = relationship("BlogPost", back_populates="author")
 
     # *******Parent relationship with Comment*******#
     # "comment_author" refers to the comment_author property in the Comment class.
     comments = relationship("Comment", back_populates="comment_author")
 
+
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
 
-    #*******Child relationship with User*******#
+    # *******Child relationship with User*******#
     # Create Foreign Key, "users.id" the users refers to the tablename of User.
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     # Create reference to the User object, the "posts" refers to the posts protperty in the User class.
@@ -89,9 +91,9 @@ class Comment(db.Model):
     # Get the text from CKeditor
     text = db.Column(db.Text, nullable=False)
 
-    #*******Child relationship with User*******#
-    #"users.id" The users refers to the tablename of the Users class.
-    #"comments" refers to the comments property in the User class.
+    # *******Child relationship with User*******#
+    # "users.id" The users refers to the tablename of the Users class.
+    # "comments" refers to the comments property in the User class.
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comment_author = relationship("User", back_populates="comments")
 
@@ -99,17 +101,20 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id'))
     parent_post = relationship("BlogPost", back_populates="comments")
 
+
 db.create_all()
+
 
 def admin_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        #If id is not 1 then return abort with 403 error
+        # If id is not 1 then return abort with 403 error
         if current_user.id != 1:
             return abort(403)
-        #Otherwise continue with the route function
+        # Otherwise continue with the route function
         return f(*args, **kwargs)
     return decorated_function
+
 
 @app.route('/', methods=["POST", "GET"])
 def get_all_posts():
@@ -208,7 +213,6 @@ def contact():
 
 
 @app.route("/new-post", methods=["POST", "GET"])
-
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
@@ -263,6 +267,7 @@ def delete_comment(comment_id):
     db.session.delete(comment_to_delete)
     db.session.commit()
     return redirect(url_for('show_post', post_id=post_id))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
